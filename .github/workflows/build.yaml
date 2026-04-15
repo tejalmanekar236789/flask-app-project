@@ -17,7 +17,15 @@ jobs:
               uses: actions/setup-python@v4
               with:
                   python-version: '3.12'
-                  
+
+            - name: setup AWS creds
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                 aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                 aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                 aws-region: us-east-1
+              
+
             - name: Setup docker buildx
               uses: docker/setup-buildx-action@v2
              
@@ -32,4 +40,10 @@ jobs:
               with:
                  context: .
                  push: true
-                 tags: rg7121/flask-app:latest
+                 tags: tejalmanekar23/flask-app:latest
+            - name: deploy  to kubernates  
+              run: |
+                 kubectl apply -f k8s/secrets.yaml
+                 kubectl apply -f k8s/deployment.yaml
+                 kubectl apply -f k8s/service.yaml
+
